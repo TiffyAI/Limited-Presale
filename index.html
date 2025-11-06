@@ -144,7 +144,7 @@
       let deepLink;
       switch (wallet) {
         case 'metamask':
-          deepLink = `https://metamask.app.link/dapp/${PRESALE_URL.replace('https://', '')}`;
+          deepLink = `metamask://dapp/${PRESALE_URL.replace('https://', '')}`;
           break;
         case 'trust':
           deepLink = `trust://browser?url=${encodeURIComponent(PRESALE_URL)}`;
