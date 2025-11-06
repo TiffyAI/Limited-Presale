@@ -130,57 +130,55 @@
     const PRESALE_URL = 'https://tiffyai.github.io/TiffyAI-Presale/';
 
     function openWalletPopup() {
-      console.log('Opening wallet popup');
       document.getElementById('walletPopup').style.display = 'flex';
     }
 
     function closePopup() {
-      console.log('Closing wallet popup');
       document.getElementById('walletPopup').style.display = 'none';
     }
 
     async function copyToClipboard(text) {
       try {
         await navigator.clipboard.writeText(text);
-        console.log('Copied presale URL to clipboard:', text);
         alert('🔗 Presale URL copied! Open MetaMask → Browser → Paste the link.');
       } catch (err) {
-        console.error('Clipboard copy failed:', err);
         alert('Failed to copy URL. Please open MetaMask Browser and visit: ' + text);
       }
     }
 
     function launch(wallet) {
       console.log('Launching wallet:', wallet);
+      const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+      // Check if on mobile
+      const isMobile = /Mobi|Android|iPhone|iPad/i.test(userAgent);
+
+      if (!isMobile) {
+        alert('Please open this site from your mobile device.');
+        return;
+      }
+
       switch (wallet) {
         case 'metamask':
-          const mainMenuLink = `https://metamask.app.link/dapp/tiffyai.github.io/TiffyAI-Presale/`;
-          console.log('Attempting Main Menu MetaMask deep link:', mainMenuLink);
-          window.location.href = mainMenuLink;
-          // Fallback: try alternative deep link, then copy URL to clipboard
-          setTimeout(() => {
-            console.log('Main Menu deep link may have failed, trying alternative link');
-            const altLink = `metamask://dapp/tiffyai.github.io/TiffyAI-Presale/`;
-            window.location.href = altLink;
-            console.log('Attempting alternative MetaMask deep link:', altLink);
-            setTimeout(() => {
-              console.log('Alternative deep link may have failed, triggering clipboard fallback');
-              copyToClipboard(PRESALE_URL);
-            }, 3000);
-          }, 3000);
+          // Correct deep-link format for MetaMask mobile
+          const mmLink = `https://metamask.app.link/dapp/https://tiffyai.github.io/TiffyAI-Presale/`;
+          window.location.href = mmLink;
+          setTimeout(() => copyToClipboard(PRESALE_URL), 4000);
           break;
+
         case 'trust':
-          const deepLink = `trust://browser?url=${encodeURIComponent(PRESALE_URL)}`;
-          console.log('Attempting Trust Wallet deep link:', deepLink);
-          window.location.href = deepLink;
+          const trustLink = `trust://browser?url=${encodeURIComponent(PRESALE_URL)}`;
+          window.location.href = trustLink;
+          setTimeout(() => copyToClipboard(PRESALE_URL), 4000);
           break;
+
         case 'okx':
-          const deepLink = `okx://wallet/dapp/details?dappUrl=${encodeURIComponent(PRESALE_URL)}`;
-          console.log('Attempting OKX Wallet deep link:', deepLink);
-          window.location.href = deepLink;
+          const okxLink = `okx://wallet/dapp/details?dappUrl=${encodeURIComponent(PRESALE_URL)}`;
+          window.location.href = okxLink;
+          setTimeout(() => copyToClipboard(PRESALE_URL), 4000);
           break;
+
         default:
-          console.error('Invalid wallet selected:', wallet);
           alert('Invalid wallet selected.');
           return;
       }
