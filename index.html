@@ -139,47 +139,29 @@
       document.getElementById('walletPopup').style.display = 'none';
     }
 
-    async function launch(wallet) {
+    function launch(wallet) {
       console.log('Launching wallet:', wallet);
       let deepLink;
-      try {
-        switch (wallet) {
-          case 'metamask':
-            deepLink = `https://metamask.app.link/dapp/tiffyai.github.io/TiffyAI-Presale/`;
-            console.log('Attempting MetaMask deep link:', deepLink);
-            window.location.href = deepLink;
-            // Fallback: if deep link fails, copy URL to clipboard after 3 seconds
-            setTimeout(async () => {
-              try {
-                await navigator.clipboard.writeText(PRESALE_URL);
-                console.log('Copied presale URL to clipboard as fallback');
-                alert('MetaMask DApp browser not opened. Copied presale URL to clipboard. Open MetaMask → Browser → Paste the URL.');
-              } catch (err) {
-                console.error('Clipboard copy failed:', err);
-                alert('MetaMask DApp browser not opened. Please open MetaMask Browser and visit: ' + PRESALE_URL);
-              }
-            }, 3000);
-            break;
-          case 'trust':
-            deepLink = `trust://browser?url=${encodeURIComponent(PRESALE_URL)}`;
-            console.log('Attempting Trust Wallet deep link:', deepLink);
-            window.location.href = deepLink;
-            break;
-          case 'okx':
-            deepLink = `okx://wallet/dapp/details?dappUrl=${encodeURIComponent(PRESALE_URL)}`;
-            console.log('Attempting OKX Wallet deep link:', deepLink);
-            window.location.href = deepLink;
-            break;
-          default:
-            console.error('Invalid wallet selected:', wallet);
-            alert('Invalid wallet selected.');
-            return;
-        }
-        closePopup();
-      } catch (error) {
-        console.error('Error launching wallet:', error);
-        alert('Failed to connect wallet: ' + (error.message || 'Unknown error'));
+      switch (wallet) {
+        case 'metamask':
+          deepLink = `https://metamask.app.link/dapp/tiffyai.github.io/TiffyAI-Presale/`;
+          console.log('Attempting MetaMask deep link:', deepLink);
+          break;
+        case 'trust':
+          deepLink = `trust://browser?url=${encodeURIComponent(PRESALE_URL)}`;
+          console.log('Attempting Trust Wallet deep link:', deepLink);
+          break;
+        case 'okx':
+          deepLink = `okx://wallet/dapp/details?dappUrl=${encodeURIComponent(PRESALE_URL)}`;
+          console.log('Attempting OKX Wallet deep link:', deepLink);
+          break;
+        default:
+          console.error('Invalid wallet selected:', wallet);
+          alert('Invalid wallet selected.');
+          return;
       }
+      window.location.href = deepLink;
+      closePopup();
     }
   </script>
 </body>
