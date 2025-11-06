@@ -147,11 +147,12 @@
       console.log('Launching wallet:', wallet);
       let deepLink;
       const isMobile = isMobileDevice();
+      const cleanPresaleUrl = PRESALE_URL.replace('https://', '');
       switch (wallet) {
         case 'metamask':
           deepLink = isMobile
-            ? `metamask://dapp/${PRESALE_URL.replace('https://', '')}`
-            : PRESALE_URL; // Desktop: direct to presale for MetaMask extension
+            ? `metamask://dapp/${cleanPresaleUrl}`
+            : PRESALE_URL;
           break;
         case 'trust':
           deepLink = `trust://browser?url=${encodeURIComponent(PRESALE_URL)}`;
@@ -164,36 +165,30 @@
           alert('Invalid wallet selected.');
           return;
       }
-      console.log('Deep link generated:', deepLink);
+      console.log('Deep link:', deepLink);
       window.location.href = deepLink;
 
-      // Fallback for all wallets
+      // Fallback chain
       setTimeout(() => {
         if (document.visibilityState === 'visible') {
-          console.log(`${wallet} deep link failed, trying alternative`);
-          let altLink;
-          switch (wallet) {
-            case 'metamask':
-              altLink = `https://metamask.app.link/dapp/${PRESALE_URL.replace('https://', '')}`;
-              break;
-            case 'trust':
-              altLink = `https://link.trustwallet.com/open_url?coin_id=60&url=${encodeURIComponent(PRESALE_URL)}`;
-              break;
-            case 'okx':
-              altLink = PRESALE_URL; // OKX fallback to direct URL
-              break;
+          console.log(`${wallet} deep link failed, trying fallback`);
+          let fallbackLink = PRESALE_URL;
+          if (wallet === 'metamask') {
+            fallbackLink = `https://metamask.app.link/dapp/${cleanPresaleUrl}`;
+          } else if (wallet === 'trust') {
+            fallbackLink = `https://link.trustwallet.com/open_url?coin_id=60&url=${encodeURIComponent(PRESALE_URL)}`;
           }
-          console.log('Alternative link:', altLink);
-          window.location.href = altLink;
+          console.log('Fallback link:', fallbackLink);
+          window.location.href = fallbackLink;
 
           setTimeout(() => {
             if (document.visibilityState === 'visible') {
-              console.log(`${wallet} alternative link failed, redirecting to presale`);
+              console.log(`${wallet} fallback failed, redirecting to presale`);
               window.location.href = PRESALE_URL;
             }
-          }, 2000);
+          }, 4000);
         }
-      }, 2000);
+      }, 4000);
       closePopup();
     }
   </script>
