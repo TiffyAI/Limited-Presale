@@ -147,7 +147,8 @@
           deepLink = `https://metamask.app.link/dapp/${PRESALE_URL.replace('https://', '')}`;
           break;
         case 'trust':
-          deepLink = `trust://open_url?url=${encodeURIComponent(PRESALE_URL)}`;
+          // Try multiple Trust Wallet deep link formats
+          deepLink = `trust://browser?url=${encodeURIComponent(PRESALE_URL)}`;
           break;
         case 'okx':
           deepLink = `okx://wallet/dapp/details?dappUrl=${encodeURIComponent(PRESALE_URL)}`;
@@ -160,15 +161,22 @@
       console.log('Deep link generated:', deepLink);
       // Attempt to open deep link
       window.location.href = deepLink;
-      // Fallback for Trust Wallet: try direct URL after a delay
-      if (wallet === 'trust') {
-        setTimeout(() => {
-          if (document.visibilityState === 'visible') {
-            console.log('Trust Wallet deep link failed, attempting direct URL');
-            window.location.href = PRESALE_URL;
+      // Fallback for Trust Wallet
+      setTimeout(() => {
+        if (document.visibilityState === 'visible') {
+          console.log('Trust Wallet deep link failed, trying alternative link');
+          if (wallet === 'trust') {
+            const altLink = `https://link.trustwallet.com/open_url?coin_id=60&url=${encodeURIComponent(PRESALE_URL)}`;
+            window.location.href = altLink;
+            setTimeout(() => {
+              if (document.visibilityState === 'visible') {
+                console.log('Alternative Trust Wallet link failed, redirecting to presale');
+                window.location.href = PRESALE_URL;
+              }
+            }, 2000);
           }
-        }, 2000);
-      }
+        }
+      }, 2000);
       closePopup();
     }
   </script>
