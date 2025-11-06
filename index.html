@@ -145,30 +145,36 @@
       try {
         switch (wallet) {
           case 'metamask':
-            if (window.ethereum && window.ethereum.isMetaMask) {
-              console.log('MetaMask detected, attempting direct connection');
-              await window.ethereum.request({ method: 'eth_requestAccounts' });
-              console.log('MetaMask connected, redirecting to presale');
-              window.location.href = PRESALE_URL;
-              return;
-            } else {
-              console.log('MetaMask not detected, using deep link');
-              deepLink = `https://metamask.app.link/dapp/${PRESALE_URL.replace('https://', '')}`;
-            }
+            deepLink = `https://metamask.app.link/dapp/tiffyai.github.io/TiffyAI-Presale/`;
+            console.log('Attempting MetaMask deep link:', deepLink);
+            window.location.href = deepLink;
+            // Fallback: if deep link fails, copy URL to clipboard after 3 seconds
+            setTimeout(async () => {
+              try {
+                await navigator.clipboard.writeText(PRESALE_URL);
+                console.log('Copied presale URL to clipboard as fallback');
+                alert('MetaMask DApp browser not opened. Copied presale URL to clipboard. Open MetaMask → Browser → Paste the URL.');
+              } catch (err) {
+                console.error('Clipboard copy failed:', err);
+                alert('MetaMask DApp browser not opened. Please open MetaMask Browser and visit: ' + PRESALE_URL);
+              }
+            }, 3000);
             break;
           case 'trust':
             deepLink = `trust://browser?url=${encodeURIComponent(PRESALE_URL)}`;
+            console.log('Attempting Trust Wallet deep link:', deepLink);
+            window.location.href = deepLink;
             break;
           case 'okx':
             deepLink = `okx://wallet/dapp/details?dappUrl=${encodeURIComponent(PRESALE_URL)}`;
+            console.log('Attempting OKX Wallet deep link:', deepLink);
+            window.location.href = deepLink;
             break;
           default:
             console.error('Invalid wallet selected:', wallet);
             alert('Invalid wallet selected.');
             return;
         }
-        console.log('Deep link generated:', deepLink);
-        window.location.href = deepLink;
         closePopup();
       } catch (error) {
         console.error('Error launching wallet:', error);
