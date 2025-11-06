@@ -139,28 +139,51 @@
       document.getElementById('walletPopup').style.display = 'none';
     }
 
+    async function copyToClipboard(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        console.log('Copied presale URL to clipboard:', text);
+        alert('🔗 Presale URL copied! Open MetaMask → Browser → Paste the link.');
+      } catch (err) {
+        console.error('Clipboard copy failed:', err);
+        alert('Failed to copy URL. Please open MetaMask Browser and visit: ' + text);
+      }
+    }
+
     function launch(wallet) {
       console.log('Launching wallet:', wallet);
-      let deepLink;
       switch (wallet) {
         case 'metamask':
-          deepLink = `https://metamask.app.link/dapp/tiffyai.github.io/TiffyAI-Presale/`;
-          console.log('Attempting MetaMask deep link:', deepLink);
+          const mainMenuLink = `https://metamask.app.link/dapp/tiffyai.github.io/TiffyAI-Presale/`;
+          console.log('Attempting Main Menu MetaMask deep link:', mainMenuLink);
+          window.location.href = mainMenuLink;
+          // Fallback: try alternative deep link, then copy URL to clipboard
+          setTimeout(() => {
+            console.log('Main Menu deep link may have failed, trying alternative link');
+            const altLink = `metamask://dapp/tiffyai.github.io/TiffyAI-Presale/`;
+            window.location.href = altLink;
+            console.log('Attempting alternative MetaMask deep link:', altLink);
+            setTimeout(() => {
+              console.log('Alternative deep link may have failed, triggering clipboard fallback');
+              copyToClipboard(PRESALE_URL);
+            }, 3000);
+          }, 3000);
           break;
         case 'trust':
-          deepLink = `trust://browser?url=${encodeURIComponent(PRESALE_URL)}`;
+          const deepLink = `trust://browser?url=${encodeURIComponent(PRESALE_URL)}`;
           console.log('Attempting Trust Wallet deep link:', deepLink);
+          window.location.href = deepLink;
           break;
         case 'okx':
-          deepLink = `okx://wallet/dapp/details?dappUrl=${encodeURIComponent(PRESALE_URL)}`;
+          const deepLink = `okx://wallet/dapp/details?dappUrl=${encodeURIComponent(PRESALE_URL)}`;
           console.log('Attempting OKX Wallet deep link:', deepLink);
+          window.location.href = deepLink;
           break;
         default:
           console.error('Invalid wallet selected:', wallet);
           alert('Invalid wallet selected.');
           return;
       }
-      window.location.href = deepLink;
       closePopup();
     }
   </script>
