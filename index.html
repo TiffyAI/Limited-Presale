@@ -127,8 +127,6 @@
   </div>
 
   <script>
-    const PRESALE_URL = 'https://tiffyai.github.io/TiffyAI-Presale/';
-
     function openWalletPopup() {
       console.log('Opening wallet popup');
       document.getElementById('walletPopup').style.display = 'flex';
@@ -147,10 +145,10 @@
           deepLink = `https://metamask.app.link/dapp/tiffyai.github.io/TiffyAI-Presale/`;
           break;
         case 'trust':
-          deepLink = `https://link.trustwallet.com/open_url?coin_id=60&url=${encodeURIComponent(PRESALE_URL)}`;
+          deepLink = `https://link.trustwallet.com/open_url?coin_id=60&url=${encodeURIComponent('https://tiffyai.github.io/TiffyAI-Presale/')}`;
           break;
         case 'okx':
-          deepLink = `okx://wallet/dapp/details?dappUrl=${encodeURIComponent(PRESALE_URL)}`;
+          deepLink = `okx://wallet/dapp/details?dappUrl=${encodeURIComponent('https://tiffyai.github.io/TiffyAI-Presale/')}`;
           break;
         default:
           console.error('Invalid wallet selected:', wallet);
