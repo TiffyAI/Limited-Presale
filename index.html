@@ -59,6 +59,58 @@
     .wallet-btn:active {
       transform: translateY(2px);
     }
+    .app-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+    .modal-inner {
+      background: var(--glass-bg);
+      border: 2px solid var(--accent1);
+      border-radius: 20px;
+      padding: 30px 20px;
+      max-width: 320px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 0 20px var(--accent2);
+      backdrop-filter: blur(8px);
+    }
+    .modal-btn {
+      background: linear-gradient(135deg, var(--accent1), var(--accent2));
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 12px;
+      margin: 10px auto;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      text-transform: uppercase;
+    }
+    .modal-btn:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 20px var(--accent1);
+    }
+    .modal-btn:active {
+      transform: translateY(2px);
+    }
+    .close-modal {
+      color: var(--accent2);
+      font-size: 16px;
+      margin-top: 12px;
+      cursor: pointer;
+      text-decoration: underline;
+    }
     .copy-section {
       background: var(--glass-bg);
       border: 1px solid var(--accent1);
@@ -105,6 +157,8 @@
     @media (max-width: 520px) {
       h1 { font-size: 24px; }
       .wallet-btn { font-size: 14px; padding: 12px 20px; }
+      .modal-inner { padding: 20px 15px; }
+      .modal-btn { font-size: 14px; padding: 10px; }
       .copy-section { padding: 12px; }
       .copy-text { font-size: 12px; }
       .copy-btn { padding: 6px 12px; font-size: 12px; }
@@ -115,9 +169,18 @@
 <body>
   <h1>🚀 TiffyAI Presale</h1>
 
-  <button class="wallet-btn" onclick="playSound(); openWallet('metamask')">MetaMask</button>
-  <button class="wallet-btn" onclick="playSound(); openWallet('trust')">Trust Wallet</button>
-  <button class="wallet-btn" onclick="playSound(); openWallet('okx')">OKX Wallet</button>
+  <button class="wallet-btn" onclick="playSound(); openWalletPopup()">Join Presale</button>
+
+  <div class="app-modal" id="walletPopup">
+    <div class="modal-inner">
+      <h3 style="color: var(--accent1); text-shadow: 0 0 10px var(--accent1);">Choose Your Wallet</h3>
+      <p style="margin-top: 10px;">Select a wallet to open the TiffyAI presale in its DApp browser.</p>
+      <button class="modal-btn" onclick="playSound(); launch('metamask')">MetaMask</button>
+      <button class="modal-btn" onclick="playSound(); launch('trust')">Trust Wallet</button>
+      <button class="modal-btn" onclick="playSound(); launch('okx')">OKX Wallet</button>
+      <div class="close-modal" onclick="playSound(); closePopup()">Close</div>
+    </div>
+  </div>
 
   <div class="copy-section">
     <div class="copy-text" id="shieldLink">https://tiffyai.github.io/TiffyAI-Presale/</div>
@@ -134,28 +197,47 @@
       sound.play().catch(error => console.error('Sound playback failed:', error));
     }
 
-    function openWallet(wallet) {
+    function openWalletPopup() {
+      console.log('Opening wallet popup');
+      document.getElementById('walletPopup').style.display = 'flex';
+    }
+
+    function closePopup() {
+      console.log('Closing wallet popup');
+      document.getElementById('walletPopup').style.display = 'none';
+    }
+
+    function launch(wallet) {
+      console.log('Launching wallet:', wallet);
       const linkMap = {
-        metamask: `https://metamask.app.link/dapp/${encodeURIComponent('https://tiffyai.github.io/TiffyAI-Presale/')}`,
+        metamask: 'https://metamask.app.link/dapp/tiffyai.github.io/TiffyAI-Presale/',
         trust: 'https://link.trustwallet.com/open_url?coin_id=20000714&url=https://tiffyai.github.io/TiffyAI-Presale/',
-        okx: `okx://wallet/dapp/details?dappUrl=${encodeURIComponent('https://tiffyai.github.io/TiffyAI-Presale/')}`
+        okx: 'okx://wallet/dapp/details?dappUrl=https%3A%2F%2Ftiffyai.github.io%2FTiffyAI-Presale%2F'
       };
 
       const link = linkMap[wallet];
       if (link) {
         console.log('Redirecting to:', link);
         window.location.href = link;
+        closePopup();
       } else {
-        alert("❌ Wallet not supported.");
+        alert('❌ Wallet not supported.');
       }
     }
 
     function copyShield() {
-      const text = document.getElementById("shieldLink").innerText;
+      const text = document.getElementById('shieldLink').innerText;
       navigator.clipboard.writeText(text).then(() => {
-        alert("✅ Presale link copied. Now paste it in your wallet's browser.");
+        alert('✅ Presale link copied. Now paste it in your wallet\'s browser.');
       });
     }
+
+    window.onclick = function(event) {
+      if (event.target.classList.contains('app-modal')) {
+        playSound();
+        closePopup();
+      }
+    };
   </script>
 </body>
 </html>
