@@ -135,25 +135,13 @@
     }
 
     function openWallet(wallet) {
-      const dappUrl = 'https://tiffyai.github.io/TiffyAI-Presale/';
-      const encodedDappUrl = encodeURIComponent(dappUrl);
       const linkMap = {
-        metamask: (() => {
-          // Bulletproof MetaMask format: Full URL encoding + BSC chain ID (56) for 2025 spec
-          const deepLink = 'https://metamask.app.link/dapp/' + encodedDappUrl + '?chainId=56';
-          // For web/mobile: Wrap in universal redirect if not in MetaMask app
-          const ua = navigator.userAgent.toLowerCase();
-          const isMobile = /iphone|ipad|ipod|android/i.test(ua);
-          const isMetaApp = /metamask/i.test(ua);
-          if (isMobile && !isMetaApp) {
-            const encodedDeepLink = encodeURIComponent(deepLink);
-            return 'https://metamask.app.link/?deeplink=' + encodedDeepLink;
-          }
-          return deepLink; // Direct deep link if in MetaMask app
-        })(),
-        trust: 'https://link.trustwallet.com/open_url?coin_id=20000714&url=' + encodedDappUrl,
+        metamask: 'https://metamask.app.link/dapp/tiffyai.github.io/TiffyAI-Presale/', // Reverted to original working format
+        trust: 'https://link.trustwallet.com/open_url?coin_id=20000714&url=https://tiffyai.github.io/TiffyAI-Presale/',
         okx: (() => {
-          // New OKX format: okx://wallet/dapp/url?dappUrl=<encoded>
+          // OKX 2025 format: okx://wallet/dapp/url?dappUrl=<encoded>
+          const dappUrl = 'https://tiffyai.github.io/TiffyAI-Presale/';
+          const encodedDappUrl = encodeURIComponent(dappUrl);
           const deepLink = 'okx://wallet/dapp/url?dappUrl=' + encodedDappUrl;
           // For web/mobile: Wrap in universal redirect if not in OKX app
           const ua = navigator.userAgent.toLowerCase();
